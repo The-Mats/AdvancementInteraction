@@ -4,7 +4,7 @@ data/*/**
 data/*.*
 # Dont ignore Jars in Plugins Folder except the project jar
 !data/plugins/*.jar
-data/plugins/AdvancementInteraction-1.0-SNAPSHOT.jar
+data/plugins/AdvancementInteraction.jar
 
 
 

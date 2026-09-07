@@ -6,6 +6,9 @@
         <option name="sourceFilePath" value="docker/docker-compose.yml" />
       </settings>
     </deployment>
-    <method v="2" />
+    <method v="2">
+      <option name="Tool_External Tools_Docker Compose Stop" enabled="true" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="AdvancementInteraction [clean,package]" run_configuration_type="MavenRunConfiguration" />
+    </method>
   </configuration>
 </component>
