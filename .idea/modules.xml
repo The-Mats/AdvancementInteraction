@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AdvancementInteraction.iml" filepath="$PROJECT_DIR$/AdvancementInteraction.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/AdvancementInteraction.iml" filepath="$PROJECT_DIR$/.idea/AdvancementInteraction.iml" />
     </modules>
   </component>
 </project>

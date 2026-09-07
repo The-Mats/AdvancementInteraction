@@ -1,0 +1,60 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      # BuildTools' remapped-mojang server jar isn't published to any Maven repo (Mojang's
+      # EULA forbids redistributing it), so it has to be built locally. Cached by MC version
+      # so this only actually runs once.
+      - name: Cache BuildTools output
+        id: buildtools-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/spigotmc
+          key: buildtools-1.20.2-remapped
+
+      - name: Run BuildTools
+        if: steps.buildtools-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL -o BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+          java -jar BuildTools.jar --rev 1.20.2 --remapped
+
+      - name: Build plugin
+        run: mvn -B clean package
+
+      - name: Determine build output name
+        id: jar
+        run: echo "name=$(mvn -q help:evaluate -Dexpression=project.build.finalName -DforceStdout).jar" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare release asset
+        run: cp "target/${{ steps.jar.outputs.name }}" AdvancementInteraction-1.20.2.jar
+
+      # Keeps one rolling "latest" release updated with the newest master build, so the
+      # README can link to a stable, permanent download URL instead of a workflow artifact
+      # (which expires and requires being logged in to GitHub to download).
+      - name: Publish latest build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view latest --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
+            gh release create latest --repo "$GITHUB_REPOSITORY" --title "Latest build (MC 1.20.2)" --notes "Automated build of the latest master commit." --prerelease
+          gh release upload latest AdvancementInteraction-1.20.2.jar --repo "$GITHUB_REPOSITORY" --clobber

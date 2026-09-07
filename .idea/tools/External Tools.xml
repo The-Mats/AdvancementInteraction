@@ -1,0 +1,9 @@
+<toolSet name="External Tools">
+  <tool name="Docker Compose Stop" showInMainMenu="true" showInEditor="true" showInProject="true" showInSearchPopup="true" disabled="false" useConsole="true" showConsoleOnStdOut="false" showConsoleOnStdErr="false" synchronizeAfterRun="true">
+    <exec>
+      <option name="COMMAND" value="docker" />
+      <option name="PARAMETERS" value="compose down" />
+      <option name="WORKING_DIRECTORY" value="$ProjectFileDir$/docker" />
+    </exec>
+  </tool>
+</toolSet>
